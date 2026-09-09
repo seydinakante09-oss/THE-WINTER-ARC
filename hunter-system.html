@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>THE SYSTEM — Hunter Log</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@400;500;600;700&display=swap');
+
+:root{
+  --bg: #05050c;
+  --bg-2: #0a0a16;
+  --panel: #0d0d1c;
+  --panel-2: #10101f;
+  --border: #2b2b5a;
+  --border-bright: #4d4dc9;
+  --violet: #7c5cff;
+  --violet-2: #a78bfa;
+  --cyan: #29e0ff;
+  --gold: #ffb703;
+  --danger: #ff4d6d;
+  --text: #e7e7f7;
+  --text-dim: #8a8ab0;
+  --text-faint: #55557a;
+}
+
+*{box-sizing:border-box; margin:0; padding:0;}
+
+body{
+  min-height:100vh;
+  background:
+    radial-gradient(circle at 20% -10%, rgba(124,92,255,0.18), transparent 40%),
+    radial-gradient(circle at 90% 10%, rgba(41,224,255,0.10), transparent 35%),
+    var(--bg);
+  color: var(--text);
+  font-family: 'Rajdhani', sans-serif;
+  padding: 28px 16px 80px;
+  display:flex;
+  justify-content:center;
+}
+
+.wrap{ width:100%; max-width: 640px; }
+
+/* ---------- Header ---------- */
+.hero{
+  text-align:center;
+  margin-bottom: 22px;
+  position:relative;
+}
+.hero .eyebrow{
+  font-family:'Orbitron', sans-serif;
+  font-size:11px;
+  letter-spacing: 6px;
+  color: var(--text-faint);
+  margin-bottom: 6px;
+}
+.hero h1{
+  font-family:'Orbitron', sans-serif;
+  font-weight:900;
+  font-size: 34px;
+  letter-spacing: 4px;
+  background: linear-gradient(120deg, var(--violet-2), var(--cyan));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 0 30px rgba(124,92,255,0.35);
+}
+.hero .date{
+  margin-top: 6px;
+  font-size: 13px;
+  color: var(--text-dim);
+  letter-spacing: 1px;
+}
+
+/* ---------- Bracket panel ---------- */
+.panel{
+  position:relative;
+  background: linear-gradient(180deg, var(--panel), var(--panel-2));
+  border: 1px solid var(--border);
+  padding: 22px 20px;
+  margin-bottom: 18px;
+}
+.panel::before, .panel::after,
+.panel .c2::before, .panel .c2::after{
+  content:'';
+  position:absolute;
+  width:16px; height:16px;
+  border: 2px solid var(--violet-2);
+  opacity: 0.9;
+}
+.panel::before{ top:-1px; left:-1px; border-right:none; border-bottom:none; }
+.panel::after{ top:-1px; right:-1px; border-left:none; border-bottom:none; }
+.panel .c2::before{ bottom:-1px; left:-1px; border-right:none; border-top:none; }
+.panel .c2::after{ bottom:-1px; right:-1px; border-left:none; border-top:none; }
+
+.panel-title{
+  font-family:'Orbitron', sans-serif;
+  font-size: 12px;
+  letter-spacing: 4px;
+  color: var(--cyan);
+  margin-bottom: 16px;
+}
+
+/* ---------- Status window ---------- */
+.status-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.rank-badge{
+  font-family:'Orbitron', sans-serif;
+  font-weight:900;
+  font-size: 46px;
+  line-height: 1;
+  color: var(--gold);
+  text-shadow: 0 0 22px rgba(255,183,3,0.45);
+}
+.rank-label{
+  font-size: 11px;
+  letter-spacing: 3px;
+  color: var(--text-faint);
+  margin-top: 2px;
+}
+.level-block{ text-align:right; }
+.level-block .lv{
+  font-family:'Orbitron', sans-serif;
+  font-size: 22px;
+  font-weight:700;
+  color: var(--text);
+}
+.level-block .title{
+  font-size: 14px;
+  color: var(--violet-2);
+  font-weight:600;
+  letter-spacing: 0.5px;
+}
+
+.xp-row{ margin-top: 18px; }
+.xp-labels{
+  display:flex; justify-content:space-between;
+  font-size: 12px;
+  color: var(--text-dim);
+  margin-bottom: 6px;
+  letter-spacing: 1px;
+}
+.xp-track{
+  height: 14px;
+  background: #16162a;
+  border: 1px solid var(--border);
+  position: relative;
+  overflow:hidden;
+}
+.xp-fill{
+  height: 100%;
+  background: linear-gradient(90deg, var(--violet), var(--cyan));
+  box-shadow: 0 0 14px rgba(124,92,255,0.65);
+  transition: width 0.5s ease;
+}
+
+.stat-row{
+  display:flex;
+  gap: 10px;
+  margin-top: 18px;
+  flex-wrap: wrap;
+}
+.stat-chip{
+  flex:1;
+  min-width: 110px;
+  background: rgba(124,92,255,0.06);
+  border: 1px solid var(--border);
+  padding: 10px 12px;
+  text-align:center;
+}
+.stat-chip .num{
+  font-family:'Orbitron', sans-serif;
+  font-size: 18px;
+  color: var(--cyan);
+}
+.stat-chip .lbl{
+  font-size: 11px;
+  color: var(--text-faint);
+  letter-spacing: 1.5px;
+  margin-top: 2px;
+}
+
+/* ---------- Quests ---------- */
+.quest-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom: 14px;
+}
+.quest-header .panel-title{ margin-bottom:0; }
+.add-btn{
+  font-family:'Rajdhani', sans-serif;
+  font-weight:700;
+  font-size: 13px;
+  letter-spacing: 1px;
+  color: var(--bg);
+  background: var(--violet-2);
+  border: none;
+  padding: 7px 14px;
+  cursor:pointer;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+.add-btn:hover{ background: var(--cyan); }
+.add-btn:active{ transform: scale(0.96); }
+
+.quest-list{ display:flex; flex-direction:column; gap:10px; }
+
+.quest{
+  display:flex;
+  align-items:center;
+  gap: 12px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid var(--border);
+  padding: 12px 14px;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+.quest.done{
+  border-color: rgba(41,224,255,0.4);
+  background: rgba(41,224,255,0.06);
+}
+.quest-check{
+  width: 22px; height:22px;
+  min-width: 22px;
+  border: 2px solid var(--text-faint);
+  cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  font-size: 14px;
+  color: var(--cyan);
+  transition: all 0.15s ease;
+}
+.quest.done .quest-check{
+  border-color: var(--cyan);
+  background: rgba(41,224,255,0.15);
+}
+.quest-body{ flex:1; min-width:0; }
+.quest-name{
+  font-size: 16px;
+  font-weight:600;
+  color: var(--text);
+}
+.quest.done .quest-name{
+  color: var(--text-dim);
+  text-decoration: line-through;
+  text-decoration-color: var(--text-faint);
+}
+.quest-meta{
+  font-size: 11.5px;
+  color: var(--text-faint);
+  margin-top: 2px;
+  letter-spacing: 0.5px;
+}
+.quest-xp{
+  font-family:'Orbitron', sans-serif;
+  font-size: 13px;
+  color: var(--gold);
+  white-space: nowrap;
+}
+.quest-del{
+  background: none;
+  border: none;
+  color: var(--text-faint);
+  cursor: pointer;
+  font-size: 16px;
+  padding: 2px 4px;
+  line-height:1;
+}
+.quest-del:hover{ color: var(--danger); }
+
+.empty{
+  text-align:center;
+  color: var(--text-faint);
+  font-size: 13px;
+  padding: 20px 0;
+  letter-spacing: 0.5px;
+}
+
+/* ---------- Add form ---------- */
+.add-form{
+  display:none;
+  gap: 8px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+.add-form.open{ display:flex; }
+.add-form input[type=text]{
+  flex:1;
+  min-width: 140px;
+  background: #10101f;
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family:'Rajdhani', sans-serif;
+  font-size: 15px;
+  padding: 9px 10px;
+}
+.add-form input[type=text]:focus{ outline:none; border-color: var(--violet-2); }
+.add-form select{
+  background: #10101f;
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family:'Rajdhani', sans-serif;
+  font-size: 14px;
+  padding: 9px 8px;
+}
+.add-form button{
+  font-family:'Rajdhani', sans-serif;
+  font-weight:700;
+  background: var(--violet);
+  color: white;
+  border: none;
+  padding: 9px 16px;
+  cursor:pointer;
+}
+
+/* ---------- Log ---------- */
+.log-list{ display:flex; flex-direction:column; gap:8px; }
+.log-item{
+  font-size: 13px;
+  color: var(--text-dim);
+  border-left: 2px solid var(--border-bright);
+  padding-left: 10px;
+}
+.log-item span{ color: var(--text-faint); font-size: 11px; margin-right:6px; }
+
+/* ---------- Level up overlay ---------- */
+.overlay{
+  position: fixed; inset:0;
+  background: rgba(2,2,8,0.88);
+  display:flex; align-items:center; justify-content:center;
+  z-index: 50;
+  opacity:0; pointer-events:none;
+  transition: opacity 0.25s ease;
+  padding: 20px;
+}
+.overlay.show{ opacity:1; pointer-events:auto; }
+.levelup-card{
+  width: 100%;
+  max-width: 380px;
+  background: linear-gradient(180deg, #0d0d20, #101026);
+  border: 1px solid var(--violet-2);
+  box-shadow: 0 0 60px rgba(124,92,255,0.35);
+  padding: 30px 26px;
+  text-align:center;
+  position:relative;
+  transform: scale(0.9);
+  transition: transform 0.3s ease;
+}
+.overlay.show .levelup-card{ transform: scale(1); }
+.levelup-card .flash{
+  font-family:'Orbitron', sans-serif;
+  font-size: 13px;
+  letter-spacing: 6px;
+  color: var(--cyan);
+  margin-bottom: 8px;
+}
+.levelup-card h2{
+  font-family:'Orbitron', sans-serif;
+  font-size: 32px;
+  font-weight:900;
+  color: var(--gold);
+  text-shadow: 0 0 24px rgba(255,183,3,0.5);
+  margin-bottom: 14px;
+}
+.levelup-card .newlv{
+  font-size: 15px;
+  color: var(--text-dim);
+  margin-bottom: 18px;
+}
+.levelup-card .reward-box{
+  border: 1px solid var(--border);
+  background: rgba(124,92,255,0.08);
+  padding: 14px;
+  margin-bottom: 20px;
+}
+.levelup-card .reward-box .rl{
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: var(--text-faint);
+  margin-bottom: 4px;
+}
+.levelup-card .reward-box .rv{
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--violet-2);
+}
+.levelup-card .rankup{
+  color: var(--gold) !important;
+}
+.levelup-card button{
+  font-family:'Rajdhani', sans-serif;
+  font-weight:700;
+  font-size: 14px;
+  letter-spacing: 1px;
+  background: var(--violet-2);
+  color: var(--bg);
+  border: none;
+  padding: 10px 26px;
+  cursor:pointer;
+}
+.levelup-card button:hover{ background: var(--cyan); }
+
+@media (max-width: 420px){
+  .hero h1{ font-size: 26px; letter-spacing: 2px; }
+  .rank-badge{ font-size: 36px; }
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <div class="hero">
+    <div class="eyebrow">SYSTEM ACTIVE</div>
+    <h1>HUNTER LOG</h1>
+    <div class="date" id="todayDate"></div>
+  </div>
+
+  <!-- Status window -->
+  <div class="panel">
+    <div class="panel-title">⟦ STATUS WINDOW ⟧</div>
+    <div class="status-top">
+      <div>
+        <div class="rank-badge" id="rankBadge">E</div>
+        <div class="rank-label">HUNTER RANK</div>
+      </div>
+      <div class="level-block">
+        <div class="lv">LV. <span id="levelNum">1</span></div>
+        <div class="title" id="titleLabel">Awakened</div>
+      </div>
+    </div>
+    <div class="xp-row">
+      <div class="xp-labels">
+        <span>XP</span>
+        <span id="xpNums">0 / 100</span>
+      </div>
+      <div class="xp-track"><div class="xp-fill" id="xpFill" style="width:0%"></div></div>
+    </div>
+    <div class="stat-row">
+      <div class="stat-chip"><div class="num" id="statStreak">0</div><div class="lbl">BEST STREAK</div></div>
+      <div class="stat-chip"><div class="num" id="statTotal">0</div><div class="lbl">QUESTS CLEARED</div></div>
+      <div class="stat-chip"><div class="num" id="statPoints">0</div><div class="lbl">STAT POINTS</div></div>
+    </div>
+    <div class="c2"></div>
+  </div>
+
+  <!-- Quests -->
+  <div class="panel">
+    <div class="quest-header">
+      <div class="panel-title">⟦ DAILY QUESTS ⟧</div>
+      <button class="add-btn" id="toggleAdd">+ QUEST</button>
+    </div>
+
+    <div class="add-form" id="addForm">
+      <input type="text" id="questName" placeholder="Nom de la quête..." maxlength="40">
+      <select id="questDiff">
+        <option value="10">Facile · 10xp</option>
+        <option value="25" selected>Moyenne · 25xp</option>
+        <option value="50">Difficile · 50xp</option>
+        <option value="100">Épique · 100xp</option>
+      </select>
+      <button id="confirmAdd">Créer</button>
+    </div>
+
+    <div class="quest-list" id="questList"></div>
+    <div class="c2"></div>
+  </div>
+
+  <!-- Log -->
+  <div class="panel">
+    <div class="panel-title">⟦ SYSTEM LOG ⟧</div>
+    <div class="log-list" id="logList"></div>
+    <div class="c2"></div>
+  </div>
+
+</div>
+
+<!-- Level up overlay -->
+<div class="overlay" id="overlay">
+  <div class="levelup-card">
+    <div class="flash" id="flashLabel">LEVEL UP</div>
+    <h2 id="overlayHeadline">LEVEL 2</h2>
+    <div class="newlv" id="overlaySub">Vous avez atteint le niveau 2.</div>
+    <div class="reward-box">
+      <div class="rl">RÉCOMPENSE DÉBLOQUÉE</div>
+      <div class="rv" id="overlayReward">Novice Hunter</div>
+    </div>
+    <button id="overlayClose">Continuer</button>
+  </div>
+</div>
+
+<script>
+(function(){
+
+  const TITLES = [
+    "Awakened","Novice Hunter","Trainee","Field Hunter","Certified Hunter",
+    "Elite Hunter","Veteran Hunter","Guild Regular","Squad Leader","Rank Breaker",
+    "Elite Veteran","Tactical Specialist","Guild Ace","Dungeon Cleaner","Iron Will",
+    "Storm Bringer","Vanguard","Sentinel","Warden","Apex Hunter",
+    "Paragon","Battle Sage","Ascendant","Realm Walker","National Level Candidate",
+    "Transcendent","Peak Hunter","Legend in the Making","Mythic Rank","National Level Hunter"
+  ];
+
+  const RANK_TABLE = [
+    {min:1, max:9, rank:"E"},
+    {min:10, max:19, rank:"D"},
+    {min:20, max:29, rank:"C"},
+    {min:30, max:39, rank:"B"},
+    {min:40, max:49, rank:"A"},
+    {min:50, max:Infinity, rank:"S"},
+  ];
+
+  const DEFAULT_QUESTS = [
+    {name:"100 pompes", xp:30},
+    {name:"Lire 20 pages", xp:20},
+    {name:"Session de travail profond", xp:40},
+    {name:"10 min de méditation", xp:15},
+    {name:"Pas de sucre aujourd'hui", xp:20},
+  ];
+
+  const todayStr = () => new Date().toISOString().slice(0,10);
+  const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+
+  function xpForLevel(level){ return 100 + (level-1)*20; }
+
+  function getLevelInfo(totalXp){
+    let level = 1, remaining = totalXp, needed = xpForLevel(1);
+    while(remaining >= needed){
+      remaining -= needed;
+      level += 1;
+      needed = xpForLevel(level);
+    }
+    return {level, currentXp: remaining, neededXp: needed};
+  }
+
+  function getRank(level){
+    for(const r of RANK_TABLE){ if(level >= r.min && level <= r.max) return r.rank; }
+    return "S";
+  }
+
+  function getTitle(level){
+    const idx = level - 1;
+    if(idx < TITLES.length) return TITLES[idx];
+    return "Monarch Lv." + level;
+  }
+
+  let state = null;
+
+  function defaultState(){
+    return {
+      totalXp: 0,
+      bestStreak: 0,
+      totalCompleted: 0,
+      currentDate: todayStr(),
+      quests: DEFAULT_QUESTS.map(q => ({
+        id: uid(), name: q.name, xp: q.xp,
+        streak: 0, completedToday: false, lastCompletedDate: null
+      })),
+      log: [{ts: todayStr(), text: "Système initialisé. Bienvenue, Chasseur."}]
+    };
+  }
+
+  async function loadState(){
+    try{
+      const res = await window.storage.get('hunter-state', false);
+      if(res && res.value){
+        state = JSON.parse(res.value);
+      } else {
+        state = defaultState();
+      }
+    } catch(e){
+      state = defaultState();
+    }
+    rolloverDay();
+    render();
+  }
+
+  async function saveState(){
+    try{
+      await window.storage.set('hunter-state', JSON.stringify(state), false);
+    } catch(e){
+      console.error('Save failed', e);
+    }
+  }
+
+  function rolloverDay(){
+    const today = todayStr();
+    if(state.currentDate !== today){
+      state.quests.forEach(q => {
+        if(q.lastCompletedDate !== state.currentDate){
+          q.streak = 0;
+        }
+        q.completedToday = false;
+      });
+      state.currentDate = today;
+    }
+  }
+
+  function addLog(text){
+    state.log.unshift({ts: todayStr(), text});
+    state.log = state.log.slice(0, 8);
+  }
+
+  let levelUpQueue = [];
+
+  function completeQuest(id){
+    const q = state.quests.find(x => x.id === id);
+    if(!q || q.completedToday) return;
+
+    const before = getLevelInfo(state.totalXp);
+
+    q.completedToday = true;
+    q.lastCompletedDate = todayStr();
+    q.streak += 1;
+    if(q.streak > state.bestStreak) state.bestStreak = q.streak;
+    state.totalCompleted += 1;
+    state.totalXp += q.xp;
+
+    const after = getLevelInfo(state.totalXp);
+    addLog(`"${q.name}" terminée · +${q.xp} XP`);
+
+    if(after.level > before.level){
+      for(let lv = before.level + 1; lv <= after.level; lv++){
+        const rankBefore = getRank(lv - 1);
+        const rankNow = getRank(lv);
+        levelUpQueue.push({
+          level: lv,
+          title: getTitle(lv),
+          rankUp: rankNow !== rankBefore ? rankNow : null
+        });
+      }
+      addLog(`Niveau supérieur atteint : LV.${after.level}`);
+    }
+
+    saveState();
+    render();
+    processLevelUpQueue();
+  }
+
+  function uncompleteQuest(id){
+    const q = state.quests.find(x => x.id === id);
+    if(!q || !q.completedToday) return;
+    q.completedToday = false;
+    q.streak = Math.max(0, q.streak - 1);
+    state.totalCompleted = Math.max(0, state.totalCompleted - 1);
+    state.totalXp = Math.max(0, state.totalXp - q.xp);
+    saveState();
+    render();
+  }
+
+  function deleteQuest(id){
+    state.quests = state.quests.filter(x => x.id !== id);
+    saveState();
+    render();
+  }
+
+  function addQuest(name, xp){
+    if(!name.trim()) return;
+    state.quests.push({
+      id: uid(), name: name.trim(), xp,
+      streak: 0, completedToday: false, lastCompletedDate: null
+    });
+    addLog(`Nouvelle quête ajoutée : "${name.trim()}"`);
+    saveState();
+    render();
+  }
+
+  function processLevelUpQueue(){
+    if(levelUpQueue.length === 0) return;
+    const next = levelUpQueue.shift();
+    showLevelUp(next);
+  }
+
+  function showLevelUp(info){
+    document.getElementById('flashLabel').textContent = info.rankUp ? "RANK UP" : "LEVEL UP";
+    document.getElementById('overlayHeadline').textContent = "LV. " + info.level;
+    document.getElementById('overlaySub').textContent = info.rankUp
+      ? `Vous avez été promu Rang ${info.rankUp}.`
+      : `Vous avez atteint le niveau ${info.level}.`;
+    const rewardEl = document.getElementById('overlayReward');
+    rewardEl.textContent = info.title;
+    rewardEl.classList.toggle('rankup', !!info.rankUp);
+    document.getElementById('overlay').classList.add('show');
+  }
+
+  document.getElementById('overlayClose').addEventListener('click', () => {
+    document.getElementById('overlay').classList.remove('show');
+    setTimeout(processLevelUpQueue, 300);
+  });
+
+  function render(){
+    const info = getLevelInfo(state.totalXp);
+    const rank = getRank(info.level);
+    const title = getTitle(info.level);
+
+    document.getElementById('rankBadge').textContent = rank;
+    document.getElementById('levelNum').textContent = info.level;
+    document.getElementById('titleLabel').textContent = title;
+    document.getElementById('xpNums').textContent = `${info.currentXp} / ${info.neededXp}`;
+    document.getElementById('xpFill').style.width = Math.min(100, (info.currentXp / info.neededXp) * 100) + '%';
+    document.getElementById('statStreak').textContent = state.bestStreak;
+    document.getElementById('statTotal').textContent = state.totalCompleted;
+    document.getElementById('statPoints').textContent = info.level - 1;
+
+    document.getElementById('todayDate').textContent = new Date().toLocaleDateString('fr-FR', {
+      weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+    });
+
+    const list = document.getElementById('questList');
+    list.innerHTML = '';
+    if(state.quests.length === 0){
+      list.innerHTML = '<div class="empty">Aucune quête. Ajoutez-en une pour commencer votre ascension.</div>';
+    } else {
+      state.quests.forEach(q => {
+        const row = document.createElement('div');
+        row.className = 'quest' + (q.completedToday ? ' done' : '');
+        row.innerHTML = `
+          <div class="quest-check">${q.completedToday ? '✓' : ''}</div>
+          <div class="quest-body">
+            <div class="quest-name">${escapeHtml(q.name)}</div>
+            <div class="quest-meta">🔥 série de ${q.streak}${q.streak === 1 ? ' jour' : ' jours'}</div>
+          </div>
+          <div class="quest-xp">+${q.xp}xp</div>
+          <button class="quest-del" title="Supprimer">✕</button>
+        `;
+        row.querySelector('.quest-check').addEventListener('click', () => {
+          q.completedToday ? uncompleteQuest(q.id) : completeQuest(q.id);
+        });
+        row.querySelector('.quest-del').addEventListener('click', (e) => {
+          e.stopPropagation();
+          deleteQuest(q.id);
+        });
+        list.appendChild(row);
+      });
+    }
+
+    const logList = document.getElementById('logList');
+    logList.innerHTML = '';
+    if(state.log.length === 0){
+      logList.innerHTML = '<div class="empty">Aucune activité récente.</div>';
+    } else {
+      state.log.forEach(l => {
+        const item = document.createElement('div');
+        item.className = 'log-item';
+        item.innerHTML = `<span>${l.ts}</span>${escapeHtml(l.text)}`;
+        logList.appendChild(item);
+      });
+    }
+  }
+
+  function escapeHtml(str){
+    const d = document.createElement('div');
+    d.textContent = str;
+    return d.innerHTML;
+  }
+
+  document.getElementById('toggleAdd').addEventListener('click', () => {
+    document.getElementById('addForm').classList.toggle('open');
+  });
+
+  document.getElementById('confirmAdd').addEventListener('click', () => {
+    const nameEl = document.getElementById('questName');
+    const diffEl = document.getElementById('questDiff');
+    addQuest(nameEl.value, parseInt(diffEl.value, 10));
+    nameEl.value = '';
+    document.getElementById('addForm').classList.remove('open');
+  });
+
+  document.getElementById('questName').addEventListener('keydown', (e) => {
+    if(e.key === 'Enter') document.getElementById('confirmAdd').click();
+  });
+
+  loadState();
+
+})();
+</script>
+
+</body>
+</html>
